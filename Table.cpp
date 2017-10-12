@@ -81,46 +81,60 @@ void Table::GenerateRandomly(unsigned int total, FileHandler*fh)
 		fh->WriteSdb(&sdb);
 	}
 }
-
-bool Table::Solve(SdkBuffer* sdb)
+void Table::DigRandomCells(SdkBuffer* pBoards,unsigned int lower, 
+                           unsigned int upper, bool isAnswerUnique)
 {
-	/*
-	//$todo(Felix):add argument checking in debug mode
-	total = 0;
-	top = 1;
-	pCurrentBuffer = sdb;
-	startSolving();
-	//total==1 means we found a solution
-	if (total == 1)return true;
-	else return false;*/
-	return true;
-}
-void Table::Solve(SdkBuffer* sdbSrc, SdkBuffer* sdbDst)
-{
-	//$todo(Felix):add argument checking in debug mode
-	SdkBuffer* sdbMid = new SdkBuffer(gBufferSize);
-	for (int i = 0; i < sdbSrc->GetSize(); i++)
+	srand(clock());
+	for (int i = 0; i < pBoards->GetSize(); i++)
 	{
-		sdbSrc->Get(i, cells);
-		startSolving(1, sdbDst);
+		pBoards->Get(i, cells);
+		int r = rand() % (upper - lower+1) + lower;
+		if (isAnswerUnique)
+		{
+			digSpecNumUniquely(cells,r);
+		}
+		else
+		{
+			digSpecNum(cells, r);
+		}
+		pBoards->Set(i,cells);
 	}
 }
+
+unsigned int Table::Solve(SdkBuffer* pBoard)
+{
+	unsigned int total=0;
+	SdkBuffer result(1);
+	for (int i = 0; i < pBoard->GetSize(); i++)
+	{
+		pBoard->Get(i, cells);
+		int r=startSolving(1, &result);
+		if (r != 0) {
+			result.Pop(cells);
+			pBoard->Set(i, cells);
+			total += 1;
+		}
+	}
+	return total;
+}
+
 void Table::Solve(FileHandler* src, FileHandler*dst)
 {
 	//$todo(Felix):add argument checking in debug mode
-	SdkBuffer*  sdbSrc = new SdkBuffer(gBufferSize);
-	SdkBuffer* sdbDst = new SdkBuffer(gBufferSize);
+	SdkBuffer sdb(gBufferSize);
 	while (src->HasNext())
 	{
-		sdbDst->Clear();
-		src->ReadSdb(sdbSrc);
-		Solve(sdbSrc, sdbDst);
-		dst->WriteSdb(sdbDst);
+		sdb.Clear();
+		src->ReadSdb(&sdb);
+		Solve(&sdb);
+		dst->WriteSdb(&sdb);
 	}
-	delete sdbSrc;
-	delete sdbDst;
 }
-
+bool Table::Solvable(SdkBuffer* pBoard, int index)
+{
+	pBoard->Get(index, cells);
+	return startSolving(1, NULL) == 1;
+}
 void Table::digSpecNum(int table[][9] , unsigned int num)
 {
 	srand(clock());

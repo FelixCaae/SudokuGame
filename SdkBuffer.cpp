@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "SdkBuffer.h"
-
+#include <memory>
 
 SdkBuffer::SdkBuffer(unsigned int capacity)
 {
-	buffer = new char[81 * capacity];
+	unsigned int length = 81 * capacity;
+	buffer = new char[length];
+	memset(buffer, '0', sizeof(char) *length);
 	this->capacity = capacity;
 	this->size = 0;
 }
@@ -30,6 +32,24 @@ bool SdkBuffer::Fill(int table[][9])
 	else
 		return false;
 }
+bool SdkBuffer::Fill(int table[81])
+{
+	if (size < capacity)
+	{
+		for (int i = 0; i < 9; i++)
+		{
+			for (int j = 0; j < 9; j++)
+			{
+				if (table[i*9+j] > 9 || table[i*9+j] < 0)return false;
+				buffer[81 * size + i * 9 + j] = '0' + table[i * 9 + j];
+			}
+		}
+		size += 1;
+		return true;
+	}
+	else
+		return false;
+}
 void SdkBuffer::Pop(int buffer[][9])
 {
 	if (size > 0)
@@ -44,7 +64,7 @@ void SdkBuffer::Pop(int buffer[][9])
 		}
 	}
 }
-void SdkBuffer :: Pop(int buffer[81])
+void SdkBuffer::Pop(int buffer[81])
 {
 	if (size > 0)
 	{
@@ -61,6 +81,16 @@ void SdkBuffer::Get(int index, int element[][9])
 	{
 		for (int j = 0; j < 9; j++) {
 			element[i][j] = buffer[index*81+i * 9 + j] - '0';
+		}
+	}
+}
+void SdkBuffer::Set(int index, int element[][9])
+{
+	//what should we do if index is bigger than size? or index is less than zero?
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++) {
+			buffer[index * 81 + i * 9 + j] = element[i][j]  - '0';
 		}
 	}
 }

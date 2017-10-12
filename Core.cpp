@@ -1,19 +1,52 @@
 #include "stdafx.h"
 #include "Core.h"
 #include "Table.h"
+#include "DifficultyEvaluation.h"
 int sum(int a, int b)
 {
 	return a + b;
 }
-/*
-void generate(int number, int mode, int result[][])
+void generate(int number, int mode, int result[][81])
 {
-}*/
-/*
-void generate(int number, int lower, int upper, bool unique, int result[][]);
-{
+	Table table;
+	SdkBuffer board(1);
+	int buffer[9][9];
+	Difficulty diff;
+	DifficultyEvaluation diev;
+	for (int i = 0; i < number; i++)
+	{
+		table.GenerateRandomly(1, &board);
+		table.DigRandomCells(&board, gRange[mode][0], gRange[mode][1], 1);
+		diff=diev.Evaluate(buffer);
+		if (diff != mode)
+		{
+			i--;
+			continue;
+		}
+		board.ToArray(result + i);
+		board.Clear();
+	}
 }
-*/
+void generate(int number, int lower, int upper, bool unique, int result[][81])
+{
+	Table table;
+	SdkBuffer buffer(gBufferSize);
+	for (int i = 0; i < number; i + gBufferSize)
+	{
+		if (i + gBufferSize > number)
+		{
+			table.GenerateRandomly(number - i, &buffer);
+		}
+		else
+		{
+			table.GenerateRandomly(gBufferSize, &buffer);
+		}
+		table.DigRandomCells(&buffer, lower, upper, unique);
+		table.Solve(&buffer);
+		buffer.ToArray(result + i);
+		buffer.Clear();
+	}
+}
 bool solve(int puzzle[], int solution[81])
 {
 	int cells[9][9];
@@ -24,12 +57,13 @@ bool solve(int puzzle[], int solution[81])
 			cells[i][j] = puzzle[i * 9 + j];
 		}
 	}
-	SdkBuffer src(1), answer(1);
-	src.Fill(cells);
+	int result;
+	SdkBuffer board(1);
+	board.Fill(cells);
 	Table table;
-	table.Solve(&src, &answer);
-	answer.Pop(solution);
-	if (solution[0] == 0)//no answer 
+	result=table.Solve(&board);
+	board.Pop(solution);
+	if (result == 0)//no answer 
 	{
 		return false;
 	}
@@ -46,7 +80,7 @@ void generate(int number, int result[][81])
 	{
 		if (i + gBufferSize > number)
 		{
-			table.GenerateRandomly(i + gBufferSize - number, &buffer);
+			table.GenerateRandomly(number - i, &buffer);
 		}
 		else
 		{

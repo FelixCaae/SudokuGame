@@ -22,10 +22,11 @@ public:
 	void ToArray(int pIntArray[][81]);
 	bool IsValid(int board[9][9]);
 	void Pop(int board[81]);
-	void Fill(int board[81]);
+	bool Fill(int board[81]);
 	void Pop(int board[][9]);
 	bool Fill(int board[][9]);
 	void Get(int index,int board[][9]);
+	void Set(int index, int board[][9]);
 	void Clear();
 	~SdkBuffer();
 };
