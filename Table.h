@@ -18,7 +18,7 @@ public:
 	void GenerateRandomly(unsigned int total, SdkBuffer * sdb);
 	void Generate(unsigned int total, FileHandler* fh);
 	void GenerateRandomly(unsigned int total, FileHandler* fh);
-	bool Solvable(SdkBuffer* sdb, int index);
+	int Solvable(SdkBuffer* sdb, int index);
 	unsigned int Solve(SdkBuffer* pBoard);
 	//Modified:Solve(SdkBuffer* src,SdkBuffer* dst)==> Solve(SdkBuffer* pBoard);
 	void Solve(FileHandler* src, FileHandler*dst);

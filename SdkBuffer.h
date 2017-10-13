@@ -24,7 +24,7 @@ public:
 	unsigned int GetSize();
 	unsigned int GetCapacity();
 	const char* ToString();
-	void InitByArray(int pIntArray[][81]);
+	void InitByArray(int pIntArray[][81],int size);
 	void ToArray(int pIntArray[][81]);
 	bool IsValid(int board[9][9]);
 	void Pop(int board[81]);

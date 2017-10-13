@@ -79,8 +79,8 @@ int main(int argc, char**args)
 					{
 						number = count - i;
 					}
-					generate(1, lower, upper, false, arrayBuffer);
-					sdb.InitByArray(arrayBuffer);
+					generate(count, lower, upper, unique, arrayBuffer);
+					sdb.InitByArray(arrayBuffer,number);
 					fh.WriteSdb(&sdb);
 				}
 			}
@@ -94,7 +94,7 @@ int main(int argc, char**args)
 			Difficulty diff = ah.GetDifficulty();
 			if (fh.Open(gOutputFilePath, "w"))
 			{
-				int arrayBuffer[gBufferSize][81];
+				int arrayBuffer[100][81];
 				SdkBuffer sdb(gBufferSize);
 				unsigned int count = ah.GetCount();
 				unsigned int number;
@@ -106,7 +106,7 @@ int main(int argc, char**args)
 						number = count - i;
 					}
 					generate(number, diff, arrayBuffer);
-					sdb.InitByArray(arrayBuffer);
+					sdb.InitByArray(arrayBuffer,number);
 					fh.WriteSdb(&sdb);
 				}
 			}

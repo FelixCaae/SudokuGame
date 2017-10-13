@@ -42,24 +42,40 @@ void Table::Generate(unsigned int total, FileHandler*fh)
 	}
 	delete sdb;
 }
-void Shuffle(int line[10])
+bool IsDiffer(int line[9], int(*record)[9], int nowsize)
 {
-	srand(clock());
-	int r, mid;
-	for (int i = 9;i >= 1;i--)
+	for (int i = 0; i < nowsize; i++)
 	{
-		r = rand() % (i + 1);
-		mid = line[i];
-		line[i] = line[r];
-		line[r] = mid;
+		bool r = true;
+		for (int j = 0; j < 9; j++)
+		{
+			r &= line[j] == record[i][j];
+		}
+		if (r)
+			return false;
 	}
+	return true;
+}
+void Shuffle(int line[9], int(*record)[9], int nowsize)
+{
+	int r, mid;
+	do {
+		for (int i = 8; i >= 0; i--)
+		{
+			r = rand() % (i + 1);//0-i
+			mid = line[i];
+			line[i] = line[r];
+			line[r] = mid;
+		}
+	} while (!IsDiffer(line, record, nowsize));
 }
 void Table::GenerateRandomly(unsigned int total, SdkBuffer* sdb)
 {
 	int firstLine[] = { 1,2,3,4,5,6,7,8,9 };
+	int(*record)[9] = new int[total][9];
 	for (unsigned int i = 0; i < total; i++)
 	{
-		Shuffle(firstLine);
+		Shuffle(firstLine,record,i);
 		for (int j = 0; j < 9; j++)
 		{
 			cells[0][j] = firstLine[j];
@@ -69,16 +85,16 @@ void Table::GenerateRandomly(unsigned int total, SdkBuffer* sdb)
 }
 void Table::GenerateRandomly(unsigned int total, FileHandler*fh)
 {
-	SdkBuffer sdb(gBufferSize);
+	SdkBuffer* sdb=new SdkBuffer(gBufferSize);
 	//generate sudoku solution and write to the file
 	for (unsigned int i = 0; i < total; i += gBufferSize)
 	{
-		sdb.Clear();
+		sdb->Clear();
 		if (total - i <= gBufferSize)
-			GenerateRandomly(total - i, &sdb);
+			GenerateRandomly(total - i, sdb);
 		else
-			GenerateRandomly(gBufferSize, &sdb);
-		fh->WriteSdb(&sdb);
+			GenerateRandomly(gBufferSize, sdb);
+		fh->WriteSdb(sdb);
 	}
 }
 void Table::DigRandomCells(SdkBuffer* pBoards,unsigned int lower, 
@@ -130,10 +146,10 @@ void Table::Solve(FileHandler* src, FileHandler*dst)
 		dst->WriteSdb(&sdb);
 	}
 }
-bool Table::Solvable(SdkBuffer* pBoard, int index)
+int Table::Solvable(SdkBuffer* pBoard, int index)
 {
 	pBoard->Get(index, cells);
-	return startSolving(1, NULL) == 1;
+	return startSolving(1, NULL);
 }
 void Table::digSpecNum(int table[][9] , unsigned int num)
 {

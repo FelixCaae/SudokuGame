@@ -16,11 +16,13 @@ void generate(int number, int mode, int result[][81])
 	for (int i = 0; i < number; i++)
 	{
 		table.GenerateRandomly(1, &board);
-		table.DigRandomCells(&board, gRange[mode][0], gRange[mode][1], 1);
+		table.DigRandomCells(&board, gRange[mode-1][0], gRange[mode-1][1], 1);
+		board.Get(0, buffer);
 		diff=diev.Evaluate(buffer);
 		if (diff != mode)
 		{
 			i--;
+			board.Clear();
 			continue;
 		}
 		board.ToArray(result + i);
@@ -30,21 +32,20 @@ void generate(int number, int mode, int result[][81])
 void generate(int number, int lower, int upper, bool unique, int result[][81])
 {
 	Table table;
-	SdkBuffer buffer(gBufferSize);
+	SdkBuffer *buffer=new SdkBuffer(gBufferSize);
 	for (unsigned int i = 0; i < number; i += gBufferSize)
 	{
 		if (i + gBufferSize > number)
 		{
-			table.GenerateRandomly(number - i, &buffer);
+			table.GenerateRandomly(number - i, buffer);
 		}
 		else
 		{
-			table.GenerateRandomly(gBufferSize, &buffer);
+			table.GenerateRandomly(gBufferSize, buffer);
 		}
-		table.DigRandomCells(&buffer, lower, upper, unique);
-		table.Solve(&buffer);
-		buffer.ToArray(result + i);
-		buffer.Clear();
+		table.DigRandomCells(buffer, lower, upper, unique);
+		buffer->ToArray(result + i);
+		buffer->Clear();
 	}
 }
 bool solve(int puzzle[], int solution[81])
@@ -75,19 +76,19 @@ bool solve(int puzzle[], int solution[81])
 void generate(int number, int result[][81])
 {
 	Table table;
-	SdkBuffer buffer(gBufferSize);
+	SdkBuffer* buffer=new SdkBuffer(gBufferSize);
 	for (unsigned int i = 0; i < number; i += gBufferSize)
 	{
 		if (i + gBufferSize > number)
 		{
-			table.GenerateRandomly(number - i, &buffer);
+			table.GenerateRandomly(number - i, buffer);
 		}
 		else
 		{
-			table.GenerateRandomly(gBufferSize, &buffer);
+			table.GenerateRandomly(gBufferSize, buffer);
 		}
-		buffer.ToArray(result + i);
-		buffer.Clear();
+		buffer->ToArray(result + i);
+		buffer->Clear();
 	}
 	
 }
