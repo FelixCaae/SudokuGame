@@ -1,9 +1,11 @@
 #include "stdafx.h"
-#include "Table.h"
-#include "CaaeSudoku.h"
 #include <math.h>
 #include <vector>
 #include <ctime>
+#include <set>
+#include "Table.h"
+#include "CaaeSudoku.h"
+
 using namespace std;
 //extern const unsigned  int gBufferSize;
 Table::Table()
@@ -78,6 +80,7 @@ void Table::GenerateRandomly(unsigned int total, SdkBuffer* sdb)
 		}
 		startSolving(1, sdb);
 	}
+	delete[] record;
 }
 void Table::GenerateRandomly(unsigned int total, FileHandler*fh)
 {
@@ -169,8 +172,50 @@ void Table::digSpecNum(int table[][9] , unsigned int num)
 		table[row][col] = 0;
 	}
 }
+void Refill(SdkBuffer* solution, int rawCells[][9])
+{
+	int maxDiff = 0;
+	int maxDiffPos = 0;
+	int minAppearVal = 0;
+	int row=0, col=0;
+	int cells[9][9];
+	for (int i = 0; i < 81; i++)
+	{
+		row = i / 9;
+		col = i % 9;
+		int values[9] = { 0,0,0,0,0,0,0,0,0};
+		for (int j = 0; j < solution->GetSize(); j++)
+		{
+			solution->Get(j, cells);
+			values[cells[row][col]-1]+=1;
+		}
+		int diff=0, minCount=0,minValue=0;
+		for (int i = 0; i < 9; i++)
+		{
+			if (values[i] != 0)
+			{
+				diff++;
+				if (minCount == 0 || values[i] < minCount)
+				{
+					minCount = values[i];
+					minValue = i + 1;
+				}
+			}
+		}
+		if (diff > maxDiff)
+		{
+			maxDiff = diff;
+			maxDiffPos = i;
+			minAppearVal = minValue;
+		}
+	}
+	row = maxDiffPos / 9;
+	col = maxDiffPos % 9;
+	rawCells[row][col] = minAppearVal;
+}
 void Table::digSpecNumUniquely(int table[][9], unsigned int num)
 {
+	const int  maxSolution = 10;
 	//TODO : Do we need to check whether the sudoku is valid?
 	srand(clock());
 	for (unsigned int i = 0; i < num; i++)
@@ -188,14 +233,16 @@ void Table::digSpecNumUniquely(int table[][9], unsigned int num)
 		table[row][col] = 0;
 
 		//Set
-		SdkBuffer sdk(1);
-		sdk.Fill(table);
-		sdk.Pop(cells);
-		int total=startSolving(2,NULL);
-		if (total == 2)
+		SdkBuffer sdb(1);
+		sdb.Fill(table);
+		sdb.Pop(cells);
+		SdkBuffer solution(maxSolution);
+		int total=startSolving(maxSolution,&solution);
+		if (total >1)
 		{
 			i--;
-			table[row][col] = value;
+			Refill(&solution, table);
+			//table[row][col] = value;
 			continue;
 		}
 	}
