@@ -11,11 +11,6 @@ DifficultyEvaluation::DifficultyEvaluation()
         for (int j = 0; j < 9; ++j)
         {
             puzzle[i][j] = 0;
-            for (int k = 1; k < 10; ++k)
-            {
-                candidate[i][j][k] = 1;
-            }
-            candidate[i][j][0] = 9;
         }
     }
 }
@@ -32,6 +27,11 @@ void DifficultyEvaluation::PuzzleInit(int p[][9])
         for (int j = 0; j < 9; ++j)
         {
             puzzle[i][j] = p[i][j];
+			for (int k = 1; k < 10; ++k)
+			{
+				candidate[i][j][k] = 1;
+			}
+			candidate[i][j][0] = 9;
             if (puzzle[i][j] != 0)
             {
                 candidate[i][j][0] = 0;

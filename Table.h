@@ -28,6 +28,7 @@ public:
 private:
 	/*
 	*/
+	void setZero();
 	void digSpecNum(int[][9],unsigned int num);
 	void digSpecNumUniquely(int[][9], unsigned int num);
 	unsigned int startSolving(unsigned int maxAnswer,SdkBuffer*pResult);

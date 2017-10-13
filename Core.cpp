@@ -16,7 +16,7 @@ void generate(int number, int mode, int result[][81])
 	for (int i = 0; i < number; i++)
 	{
 		table.GenerateRandomly(1, &board);
-		table.DigRandomCells(&board, gRange[mode-1][0], gRange[mode-1][1], 1);
+		table.DigRandomCells(&board, gRange[mode-1][0], gRange[mode-1][1], true);
 		board.Get(0, buffer);
 		diff=diev.Evaluate(buffer);
 		if (diff != mode)

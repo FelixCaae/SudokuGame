@@ -8,13 +8,7 @@ using namespace std;
 //extern const unsigned  int gBufferSize;
 Table::Table()
 {
-	for (int i = 0; i < 9; i++)
-	{
-		for (int j = 0; j < 9; j++)
-		{
-			cells[i][j] = 0;
-		}
-	}
+	setZero();
 }
 void Table::Generate(unsigned int max, SdkBuffer* sdb)
 {
@@ -22,6 +16,7 @@ void Table::Generate(unsigned int max, SdkBuffer* sdb)
 	unsigned int left = sdb->GetCapacity() - sdb->GetSize();
 	if (max > left)max = left;
 	//start solving
+	setZero();
 	startSolving(max, sdb);
 }
 
@@ -73,6 +68,7 @@ void Table::GenerateRandomly(unsigned int total, SdkBuffer* sdb)
 {
 	int firstLine[] = { 1,2,3,4,5,6,7,8,9 };
 	int(*record)[9] = new int[total][9];
+	setZero();
 	for (unsigned int i = 0; i < total; i++)
 	{
 		Shuffle(firstLine,record,i);
@@ -298,6 +294,16 @@ void Table::solve(int subt, int num,unsigned int &total,unsigned int&top,SdkBuff
 		index++;
 	}
 	delete[] suitcells;
+}
+void Table::setZero()
+{
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			cells[i][j] = 0;
+		}
+	}
 }
 Table::~Table()
 {
