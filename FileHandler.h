@@ -10,7 +10,7 @@ public:
 	void Close();
 	void WriteSdb(SdkBuffer* sdb);
 	void ReadSdb(SdkBuffer* sdb);
-	void WriteArray(int array[][81],int size);
+//	void WriteArray(int array[][81],int size);
 	bool HasNext();
 	~FileHandler();
 };

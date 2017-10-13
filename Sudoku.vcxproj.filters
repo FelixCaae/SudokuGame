@@ -42,6 +42,9 @@
     <ClInclude Include="Core.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DifficultyEvaluation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -63,6 +66,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ArgumentHandler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DifficultyEvaluation.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

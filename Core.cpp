@@ -31,7 +31,7 @@ void generate(int number, int lower, int upper, bool unique, int result[][81])
 {
 	Table table;
 	SdkBuffer buffer(gBufferSize);
-	for (int i = 0; i < number; i + gBufferSize)
+	for (unsigned int i = 0; i < number; i += gBufferSize)
 	{
 		if (i + gBufferSize > number)
 		{
@@ -76,7 +76,7 @@ void generate(int number, int result[][81])
 {
 	Table table;
 	SdkBuffer buffer(gBufferSize);
-	for (int i = 0; i < number; i + gBufferSize)
+	for (unsigned int i = 0; i < number; i += gBufferSize)
 	{
 		if (i + gBufferSize > number)
 		{

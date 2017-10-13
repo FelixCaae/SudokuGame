@@ -21,63 +21,104 @@ int main(int argc, char**args)
     }
 	FileHandler fh;
     Table tb;
-    if (st == State::GEN)
-    {
-        do {
-            unsigned int count = ah.GetCount();
-            /*if (count > MaxCounts)
-            {
-                cout << "Count is too big" << endl;
-                break;
-            }*/
-            if (!fh.Open("sudoku.txt", "w")) {
-                cout << "File IO error!" << endl;
-                break;
-            }
-            tb.GenerateRandomly(count, fh);
-        } while (false);
-    }
-    else if(st == State::SOV)
-    {
-        FileHandler dst;
-        do {
-            if (dst.Open("sudoku.txt", "w") && fh.Open(ah.GetPathName(), "r"))
-            {
-                tb.Solve(fh, dst);
-            }
-            else
-            {
-                cout << "Error happend when trying to read puzzle file" << endl;
-            }
-        } while (false);
-        dst.Close();
-    }
-	else if (st == State::GEG_R)
-	{
-		if (fh.Open(gOutputFilePath, "w"))
-	    {
-			
-		}
-		else
+	try {
+		if (st == State::GEN)
 		{
-            cout << "Error happend when trying to read puzzle file" << endl;
-        }
+			do {
+				unsigned int count = ah.GetCount();
+				/*if (count > MaxCounts)
+				{
+					cout << "Count is too big" << endl;
+					break;
+				}*/
+				if (!fh.Open("sudoku.txt", "w")) {
+					cout << "File IO error!" << endl;
+					break;
+				}
+				tb.GenerateRandomly(count, &fh);
+			} while (false);
+		}
+		else if (st == State::SOV)
+		{
+			FileHandler dst;
+			do {
+				if (dst.Open("sudoku.txt", "w") && fh.Open(ah.GetPathName(), "r"))
+				{
+					tb.Solve(&fh, &dst);
+				}
+				else
+				{
+					cout << "Error happend when trying to read puzzle file" << endl;
+				}
+			} while (false);
+			dst.Close();
+		}
+		else if (st == State::GEG_R || st == State::GEG_U || st == State::GEG_RU)
+		{
+			bool unique = false;
+			unsigned int lower = 1, upper = 1;
+			if (st == State::GEG_U || st == State::GEG_RU)
+			{
+				unique = true;
+			}
+			if (st == State::GEG_R || st == State::GEG_RU)
+			{
+				lower = ah.GetLower();
+				upper = ah.GetUpper();
+			}
+			if (fh.Open(gOutputFilePath, "w"))
+			{
+				int arrayBuffer[gBufferSize][81];
+				SdkBuffer sdb(gBufferSize);
+				unsigned int count = ah.GetCount();
+				unsigned int number;
+				for (int i = 0; i < count; i += gBufferSize)
+				{
+					number = gBufferSize;
+					if (count - i < gBufferSize)
+					{
+						number = count - i;
+					}
+					generate(1, lower, upper, false, arrayBuffer);
+					sdb.InitByArray(arrayBuffer);
+					fh.WriteSdb(&sdb);
+				}
+			}
+			else
+			{
+				//throw
+			}
+		}
+		else if (st == State::GEG_M)
+		{
+			Difficulty diff = ah.GetDifficulty();
+			if (fh.Open(gOutputFilePath, "w"))
+			{
+				int arrayBuffer[gBufferSize][81];
+				SdkBuffer sdb(gBufferSize);
+				unsigned int count = ah.GetCount();
+				unsigned int number;
+				for (int i = 0; i < count; i += gBufferSize)
+				{
+					number = gBufferSize;
+					if (count - i < gBufferSize)
+					{
+						number = count - i;
+					}
+					generate(number, diff, arrayBuffer);
+					sdb.InitByArray(arrayBuffer);
+					fh.WriteSdb(&sdb);
+				}
+			}
+			else
+			{
+				//throw 
+			}
+		}
 	}
-	else if (st == State::GEG_U)
+	catch(exception ex)
 	{
-
-	}
-	else if (st == State::GEG_RU)
-	{
-
-	}
-	else if (st == State::GEG_M)
-	{
-
-	}
-	else
-	{
-		return 1;
+		//todo(Zijia):
 	}
     fh.Close();
 #ifdef  DEBUG

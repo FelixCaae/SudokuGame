@@ -46,7 +46,7 @@ void Shuffle(int line[10])
 {
 	srand(clock());
 	int r, mid;
-	for (int i = 9; i--; i >= 1)
+	for (int i = 9;i >= 1;i--)
 	{
 		r = rand() % (i + 1);
 		mid = line[i];
@@ -57,7 +57,7 @@ void Shuffle(int line[10])
 void Table::GenerateRandomly(unsigned int total, SdkBuffer* sdb)
 {
 	int firstLine[] = { 1,2,3,4,5,6,7,8,9 };
-	for (int i = 0; i < total; i++)
+	for (unsigned int i = 0; i < total; i++)
 	{
 		Shuffle(firstLine);
 		for (int j = 0; j < 9; j++)
@@ -85,7 +85,7 @@ void Table::DigRandomCells(SdkBuffer* pBoards,unsigned int lower,
                            unsigned int upper, bool isAnswerUnique)
 {
 	srand(clock());
-	for (int i = 0; i < pBoards->GetSize(); i++)
+	for (unsigned int i = 0; i < pBoards->GetSize(); i++)
 	{
 		pBoards->Get(i, cells);
 		int r = rand() % (upper - lower+1) + lower;
@@ -105,7 +105,7 @@ unsigned int Table::Solve(SdkBuffer* pBoard)
 {
 	unsigned int total=0;
 	SdkBuffer result(1);
-	for (int i = 0; i < pBoard->GetSize(); i++)
+	for (unsigned int i = 0; i < pBoard->GetSize(); i++)
 	{
 		pBoard->Get(i, cells);
 		int r=startSolving(1, &result);
@@ -150,7 +150,7 @@ void Table::digSpecNum(int table[][9] , unsigned int num)
 		index[r] = index[i];
 		index[i] = mid;
 	}
-	for (int i = 0; i < num; i++)
+	for (unsigned int i = 0; i < num; i++)
 	{
 		unsigned int row = index[i] / 9;
 		unsigned int col = index[i] % 9;
@@ -161,7 +161,7 @@ void Table::digSpecNumUniquely(int table[][9], unsigned int num)
 {
 	//TODO : Do we need to check whether the sudoku is valid?
 	srand(clock());
-	for (int i = 0; i < num; i++)
+	for (unsigned int i = 0; i < num; i++)
 	{
 		int r = rand() % 81;
 		int row = r / 9;

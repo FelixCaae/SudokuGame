@@ -10,6 +10,25 @@ SdkBuffer::SdkBuffer(unsigned int capacity)
 	this->capacity = capacity;
 	this->size = 0;
 }
+void SdkBuffer::InitByArray(int array[][81])
+{
+	size = 0;
+	unsigned int number = sizeof(array) / sizeof(int(*)[81]);
+	if (number > capacity)
+	{
+		delete buffer;
+		capacity = number;
+		buffer = new char[number];
+	}
+	for (int i = 0; i < number; i++)
+	{
+		for (int j = 0; j < 81; j++)
+		{
+			buffer[i * 81 + j] = array[i][j] - '0';
+		}
+	}
+	this->size = number;
+}
 SdkBuffer::~SdkBuffer()
 {
 	delete[] buffer;
